@@ -23,8 +23,7 @@ class UserModel {
   findByUsername(pool) {
     return pool
       .request()
-      .input("username", sql.VarChar(200), this.username)
-      .query(`select * from users where username = @username`);
+      .query(`select * from users where username like '%${this.username}%'`);
   }
 
   insert(pool) {

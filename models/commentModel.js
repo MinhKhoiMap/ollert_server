@@ -19,7 +19,9 @@ class CommentModel {
     return pool
       .request()
       .input("id_task", sql.VarChar(10), this.id_task)
-      .query(`select * from comments where id_task = @id_task`);
+      .query(
+        `select * from comments join users on users.id_user = comments.id_user where id_task = @id_task`
+      );
   }
 
   insert(pool) {

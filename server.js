@@ -9,7 +9,7 @@ const taskController = require("./controllers/taskController");
 const passCors = require("./cors");
 
 const server = http.createServer((req, res) => {
-  console.log(req.method, req.url);
+  // console.log(req.method, req.url);
   passCors(res);
   const headers = {
     "Access-Control-Allow-Origin": "*",

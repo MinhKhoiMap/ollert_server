@@ -34,11 +34,26 @@ async function getTaskById(req, res) {
 
   try {
     let taskModel = new TaskModel(id_task);
+    let memModel = new MemberModel(taskModel.id_task);
+    let commentModel = new CommentModel();
+    commentModel.id_task = taskModel.id_task;
 
     const taskRes = await taskModel.findById(connect);
+    const memRes = await memModel.findByTask(connect);
+    const commentRes = await commentModel.findByTask(connect);
 
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ data: taskRes.recordset }));
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+    });
+    res.end(
+      JSON.stringify({
+        data: {
+          ...taskRes.recordset[0],
+          member: memRes.recordset,
+          comments: commentRes.recordset,
+        },
+      })
+    );
   } catch (error) {
     res.writeHead(500, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: error.message }));
@@ -122,7 +137,8 @@ async function addMember(req, res) {
   let id_task = req.url.split("/")[3];
 
   try {
-    let memberModel = new MemberModel(id_task, req.user.id_user);
+    let body = await parseBodyData();
+    let memberModel = new MemberModel(id_task, body.id_user);
 
     await memberModel.insert(connect);
 

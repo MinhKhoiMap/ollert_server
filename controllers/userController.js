@@ -45,7 +45,7 @@ async function searchUser(req, res) {
     const response = await userModel.findByUsername(connect);
 
     res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ data: response }));
+    res.end(JSON.stringify({ data: response.recordset }));
   } catch (error) {
     res.writeHead(err.status || 500, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: err.message }));
