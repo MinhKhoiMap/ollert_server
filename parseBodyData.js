@@ -7,6 +7,7 @@ function parseBodyData(req) {
       });
 
       req.on("end", () => {
+        console.log(body, "la sao nua");
         resolve(JSON.parse(body));
       });
     } catch (error) {

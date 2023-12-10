@@ -18,7 +18,6 @@ async function getAllBoards(req, res) {
   try {
     let boardModel = new BoardModel();
     boardModel.id_user = req.user.id_user;
-    // boardModel.id_user = "Q7JSJgGjI5";
 
     const response = await boardModel.findAll(connect);
 
@@ -92,7 +91,7 @@ async function deleteBoard(req, res) {
     }
 
     await transaction.commit();
-    
+
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "deleted successfully" }));
   } catch (error) {

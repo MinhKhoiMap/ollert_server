@@ -75,6 +75,7 @@ class UserModel {
     return pool
       .request()
       .input("bio", sql.NVarChar(300), newBio)
+      .input("id_user", sql.VarChar(10), this.id_user)
       .query(`update users set bio = @bio where id_user = @id_user`);
   }
 }

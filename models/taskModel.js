@@ -9,6 +9,13 @@ class TaskModel {
     this.id_todo = id_todo;
   }
 
+  findByUser(pool, id_user) {
+    return pool.request().input("id_user", sql.VarChar(10), id_user).query(`
+      select * from tasks join (select id_todo, id_user from todos join boards on todos.id_board = boards.id_board) as tbl
+          on tasks.id_todos = tbl.id_todo
+          where id_user = @id_user`);
+  }
+
   findById(pool) {
     return pool
       .request()
@@ -55,7 +62,8 @@ class TaskModel {
   updateTitle(pool, newTitle) {
     return pool
       .request()
-      .input("id_task", sql.VarChar(10), newTitle)
+      .input("id_task", sql.VarChar(10), this.id_task)
+      .input("title", sql.VarChar(10), newTitle)
       .query(`update tasks set title = @title where id_task = @id_task`);
   }
 

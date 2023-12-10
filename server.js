@@ -9,7 +9,7 @@ const taskController = require("./controllers/taskController");
 const passCors = require("./cors");
 
 const server = http.createServer((req, res) => {
-  // console.log(req.method, req.url);
+  console.log(req.method, req.url);
   passCors(res);
   const headers = {
     "Access-Control-Allow-Origin": "*",
@@ -25,6 +25,10 @@ const server = http.createServer((req, res) => {
     switch (req.method) {
       case "POST":
         userController.createUser(req, res);
+        break;
+      case "PUT":
+        req.user = checkAuth(req, res);
+        userController.updateUser(req, res);
         break;
       default:
         res.writeHead(404, { "Content-Type": "application/json" });
@@ -125,12 +129,16 @@ const server = http.createServer((req, res) => {
         res.writeHead(404, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ message: "Route not found" }));
     }
+  } else if (req.url === "/api/tasks" && req.method === "GET") {
+    req.user = checkAuth(req, res);
+    console.log(req.user);
+    taskController.getAllTask(req, res);
   } else if (req.url.match(/\/api\/tasks\/([a-zA-Z0-9]+)/)) {
     switch (req.method) {
       case "GET":
         taskController.getTaskById(req, res);
         break;
-      case "DELETE":  
+      case "DELETE":
         taskController.deleteTask(req, res);
         break;
       default:
@@ -151,6 +159,8 @@ const server = http.createServer((req, res) => {
       taskController.addMember(req, res);
     } else if (url.get("field") == "deadline") {
       taskController.updateDeadline(req, res);
+    } else if (url.get("field") == "title") {
+      taskController.updateTitle(req, res);
     }
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });

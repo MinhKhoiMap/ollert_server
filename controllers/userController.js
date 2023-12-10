@@ -141,7 +141,7 @@ async function updateDisplayname(req, res) {
   try {
     let userModel = new UserModel(req.user.id_user);
 
-    await userModel.updateUsername(connect, newDisplayname);
+    await userModel.updateDisplayName(connect, newDisplayname);
 
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ message: "Update display name successfully" }));
@@ -169,6 +169,30 @@ async function updateBio(req, res) {
   }
 }
 
+async function updateUser(req, res) {
+  let connect = await connectDB;
+
+  let body = await parseBodyData(req);
+  let newUsername = body.username;
+  let newDisplayname = body.displayname;
+  let newBio = body.bio;
+
+  try {
+    let userModel = new UserModel(req.user.id_user);
+
+    await userModel.updateUsername(connect, newUsername);
+    await userModel.updateDisplayName(connect, newDisplayname);
+    await userModel.updateBio(connect, newBio);
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: "Update username successfully" }));
+  } catch (error) {
+    // const err = JSON.parse(error.message) || error.message;
+    res.writeHead(500, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: error.message }));
+  }
+}
+
 module.exports = {
   getUserById,
   searchUser,
@@ -177,4 +201,5 @@ module.exports = {
   updateUsername,
   updateDisplayname,
   updateBio,
+  updateUser,
 };

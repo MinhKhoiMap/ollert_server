@@ -28,6 +28,24 @@ async function getTaskByTodo(req, res) {
   }
 }
 
+async function getAllTask(req, res) {
+  let connect = await connectDB;
+  try {
+    let taskModel = new TaskModel();
+
+    const taskListRes = await taskModel.findByUser(connect, req.user.id_user);
+
+    res.writeHead(200, {
+      "Content-Type": "application/json",
+    });
+    res.end(
+      JSON.stringify({
+        data: taskListRes.recordset,
+      })
+    );
+  } catch (error) {}
+}
+
 async function getTaskById(req, res) {
   let connect = await connectDB;
   let id_task = req.url.split("/")[3];
@@ -176,6 +194,34 @@ async function addComment(req, res) {
   }
 }
 
+async function updateTitle(req, res) {
+  let connect = await connectDB;
+  let url = new URL(
+    `${process.env.SERVER_DOMAIN}:${process.env.PORT || 5000}${req.url}`
+  ).searchParams;
+  let id_task = url.get("id_task");
+  try {
+    let body = await parseBodyData(req);
+    let taskModel = new TaskModel(id_task);
+
+    const taskUpRes = await taskModel.updateTitle(connect, body.title);
+    if (taskUpRes.rowsAffected[0] < 1) {
+      throw new Error("Task not found");
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        message: "Update deadline successfully",
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: error.message }));
+  }
+}
+
 async function updateDeadline(req, res) {
   let connect = await connectDB;
   let url = new URL(
@@ -212,4 +258,6 @@ module.exports = {
   addMember,
   addComment,
   updateDeadline,
+  updateTitle,
+  getAllTask,
 };
