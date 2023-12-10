@@ -161,6 +161,10 @@ const server = http.createServer((req, res) => {
       taskController.updateDeadline(req, res);
     } else if (url.get("field") == "title") {
       taskController.updateTitle(req, res);
+    } else if (url.get("field") == "description") {
+      taskController.updateDesc(req, res);
+    } else if (url.get("field") == "comment") {
+      taskController.addComment(req, res);
     }
   } else {
     res.writeHead(404, { "Content-Type": "application/json" });

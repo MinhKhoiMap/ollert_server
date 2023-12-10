@@ -54,7 +54,7 @@ async function getTaskById(req, res) {
     let taskModel = new TaskModel(id_task);
     let memModel = new MemberModel(taskModel.id_task);
     let commentModel = new CommentModel();
-    commentModel.id_task = taskModel.id_task;
+    commentModel.id_task = id_task;
 
     const taskRes = await taskModel.findById(connect);
     const memRes = await memModel.findByTask(connect);
@@ -171,7 +171,11 @@ async function addMember(req, res) {
 
 async function addComment(req, res) {
   let connect = await connectDB;
-  let id_task = req.url.split("/")[3];
+  
+  let url = new URL(
+    `${process.env.SERVER_DOMAIN}:${process.env.PORT || 5000}${req.url}`
+  ).searchParams;
+  let id_task = url.get("id_task");
 
   try {
     let body = await parseBodyData(req);
@@ -250,6 +254,38 @@ async function updateDeadline(req, res) {
   }
 }
 
+async function updateDesc(req, res) {
+  let connect = await connectDB;
+  let url = new URL(
+    `${process.env.SERVER_DOMAIN}:${process.env.PORT || 5000}${req.url}`
+  ).searchParams;
+  let id_task = url.get("id_task");
+  try {
+    let body = await parseBodyData(req);
+    let taskModel = new TaskModel(id_task);
+
+    const taskUpRes = await taskModel.updateDescription(
+      connect,
+      body.description
+    );
+
+    if (taskUpRes.rowsAffected[0] < 1) {
+      throw new Error("Task not found");
+    }
+
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        message: "Update deadline successfully",
+      })
+    );
+  } catch (error) {
+    console.log(error);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ message: error.message }));
+  }
+}
+
 module.exports = {
   getTaskById,
   createTask,
@@ -260,4 +296,5 @@ module.exports = {
   updateDeadline,
   updateTitle,
   getAllTask,
+  updateDesc,
 };

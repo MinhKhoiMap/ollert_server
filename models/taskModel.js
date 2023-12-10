@@ -71,6 +71,7 @@ class TaskModel {
     return pool
       .request()
       .input("description", sql.NVarChar(100), newDescription)
+      .input("id_task", sql.VarChar(10), this.id_task)
       .query(
         `update tasks set description = @description where id_task = @id_task`
       );

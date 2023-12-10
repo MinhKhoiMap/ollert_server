@@ -32,7 +32,7 @@ class CommentModel {
       .input("id_user", sql.VarChar(10), this.id_user)
       .input("id_task", sql.VarChar(10), this.id_task)
       .query(`insert into comments (id_comments, content, id_user, id_task)
-            valuse (@id_comments, @content, @id_user, @id_task)`);
+            values (@id_comments, @content, @id_user, @id_task)`);
   }
 
   deleteComment(pool) {
