@@ -20,7 +20,7 @@ async function getUserById(req, res) {
   let connect = await connectDB;
 
   try {
-    let userModel = new UserModel(id);
+    let userModel = new UserModel(req.user.id_user || id);
     const response = await userModel.findById(connect);
 
     res.writeHead(200, { "Content-Type": "application/json" });

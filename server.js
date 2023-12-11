@@ -30,6 +30,10 @@ const server = http.createServer((req, res) => {
         req.user = checkAuth(req, res);
         userController.updateUser(req, res);
         break;
+      case "GET":
+        req.user = checkAuth(req, res);
+        userController.getUserById(req, res);
+        break;
       default:
         res.writeHead(404, { "Content-Type": "application/json" });
         res.end(JSON.stringify({ message: "Route not found" }));
